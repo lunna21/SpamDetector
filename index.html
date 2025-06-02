@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detector de Spam Avanzado</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="title">🛡️ Detector de Spam</h1>
+        <p class="description">
+          Ingresa un mensaje para verificar si podría ser marcado como spam.
+          Utiliza expresiones regulares avanzadas para detectar patrones
+          sospechosos.
+        </p>
+      </header>
+
+      <main>
+        <div class="input-section">
+          <label class="message-label" for="message-input"
+            >Ingresa el mensaje a analizar:</label
+          >
+          <textarea
+            placeholder="Escribe o pega aquí el mensaje que quieres analizar..."
+            id="message-input"
+            rows="6"
+          ></textarea>
+        </div>
+
+        <div class="button-container">
+          <button class="btn btn-primary" id="check-message-btn">
+            Analizar Mensaje
+          </button>
+          <button class="btn btn-secondary" id="clear-btn">🗑️ Limpiar</button>
+        </div>
+
+        <div class="result-container">
+          <div id="result"></div>
+          <div
+            id="detected-patterns"
+            class="detected-patterns"
+            style="display: none"
+          >
+            <h3>Patrones detectados:</h3>
+            <div id="patterns-list"></div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number" id="total-checked">0</div>
+            <div class="stat-label">Mensajes analizados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="spam-detected">0</div>
+            <div class="stat-label">Spam detectado</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="safe-messages">0</div>
+            <div class="stat-label">Mensajes seguros</div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <p>&copy; 2025 Detector de Spam Avanzado</p>
+      </footer>
+    </div>
+
+    <script>
+      // Elementos del DOM
+      const messageInput = document.getElementById("message-input");
+      const result = document.getElementById("result");
+      const checkMessageButton = document.getElementById("check-message-btn");
+      const clearButton = document.getElementById("clear-btn");
+      const detectedPatternsDiv = document.getElementById("detected-patterns");
+      const patternsListDiv = document.getElementById("patterns-list");
+
+      // Contadores
+      let totalChecked = 0;
+      let spamDetected = 0;
+      let safeMessages = 0;
+
+      // Expresiones regulares mejoradas con nombres descriptivos
+      const spamPatterns = {
+        help: {
+          regex: /please help|assist me|help me please|urgent help/i,
+          name: "Solicitud de ayuda",
+        },
+        money: {
+          regex: /[0-9]+\s*(?:hundred|thousand|million|billion)?\s+dollars?/i,
+          name: "Menciones de dinero",
+        },
+        freeMoney: {
+          regex: /(?:^|\s)fr[e3][e3]\s*m[o0]n[e3]y(?:\s|$|!)/i,
+          name: "Dinero gratis",
+        },
+        stockAlert: {
+          regex: /(?:^|\s)[s5][t7][o0][c]{1}k\s+[a@4][l1][e3]r[t7](?:\s|$|!)/i,
+          name: "Alerta de acciones",
+        },
+        dearFriend: {
+          regex: /(?:^|\s)d[e3][a@4]r\s+fr[i1][e3]nd(?:\s|$|!)/i,
+          name: "Saludo sospechoso",
+        },
+        urgentAction: {
+          regex: /urgent.{0,20}action|act now|limited time|expires soon/i,
+          name: "Urgencia sospechosa",
+        },
+        winPrize: {
+          regex:
+            /you.{0,10}won|winner|congratulations.{0,20}prize|claim.{0,10}reward/i,
+          name: "Premio o ganador",
+        },
+        clickHere: {
+          regex: /click here|click now|visit.{0,10}link|download now/i,
+          name: "Llamada a la acción",
+        },
+      };
+
+      // Función mejorada para detectar spam
+      const analyzeSpam = (msg) => {
+        const detectedPatterns = [];
+        let isSpamMessage = false;
+
+        for (const [key, pattern] of Object.entries(spamPatterns)) {
+          if (pattern.regex.test(msg)) {
+            detectedPatterns.push(pattern.name);
+            isSpamMessage = true;
+          }
+        }
+
+        return {
+          isSpam: isSpamMessage,
+          patterns: detectedPatterns,
+          confidence: Math.min(95, detectedPatterns.length * 25),
+        };
+      };
+
+      // Función para actualizar estadísticas
+      const updateStats = () => {
+        document.getElementById("total-checked").textContent = totalChecked;
+        document.getElementById("spam-detected").textContent = spamDetected;
+        document.getElementById("safe-messages").textContent = safeMessages;
+      };
+
+      // Función para mostrar patrones detectados
+      const showDetectedPatterns = (patterns) => {
+        if (patterns.length > 0) {
+          patternsListDiv.innerHTML = patterns
+            .map((pattern) => `<span class="pattern-item">${pattern}</span>`)
+            .join("");
+          detectedPatternsDiv.style.display = "block";
+        } else {
+          detectedPatternsDiv.style.display = "none";
+        }
+      };
+
+      // Event listener para el botón de análisis
+      checkMessageButton.addEventListener("click", () => {
+        const message = messageInput.value.trim();
+
+        if (message === "") {
+          result.textContent =
+            "⚠️ Por favor, ingresa un mensaje para analizar.";
+          result.className = "";
+          return;
+        }
+
+        const analysis = analyzeSpam(message);
+        totalChecked++;
+
+        if (analysis.isSpam) {
+          spamDetected++;
+          result.textContent = `¡SPAM DETECTADO! Confianza: ${analysis.confidence}%`;
+          result.className = "result-spam";
+          showDetectedPatterns(analysis.patterns);
+        } else {
+          safeMessages++;
+          result.textContent = "Este mensaje parece seguro y no contiene spam.";
+          result.className = "result-safe";
+          detectedPatternsDiv.style.display = "none";
+        }
+
+        updateStats();
+      });
+
+      // Event listener para el botón de limpiar
+      clearButton.addEventListener("click", () => {
+        messageInput.value = "";
+        result.textContent = "";
+        result.className = "";
+        detectedPatternsDiv.style.display = "none";
+        messageInput.focus();
+      });
+
+      // Permitir análisis con Enter (Ctrl+Enter para nueva línea)
+      messageInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey) {
+          e.preventDefault();
+          checkMessageButton.click();
+        }
+      });
+
+      // Inicializar estadísticas
+      updateStats();
+
+      // Auto-focus en el textarea
+      messageInput.focus();
+    </script>
+  </body>
+</html>
