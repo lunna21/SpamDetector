@@ -1357,9 +1357,6 @@ analysis_result_t analyze_message(const char* message) {
         memcpy(current_result.patterns, detected_patterns, sizeof(pattern_t) * pattern_count);
     }
     
-    /* Guardar estadísticas en archivo */
-    save_statistics();
-    
     return current_result;
 }
 
