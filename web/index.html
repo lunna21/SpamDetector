@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Spam Avanzado</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🛡️ Detector de Spam</h1>
+            <p class="description">
+                Ingresa un mensaje para verificar si podría ser marcado como spam.
+                Este análisis utiliza un motor basado en C con Flex y Bison.
+            </p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <label class="message-label" for="message-input">Ingresa el mensaje a analizar:</label>
+                <textarea
+                    placeholder="Escribe o pega aquí el mensaje que quieres analizar..."
+                    id="message-input"
+                    rows="6"
+                ></textarea>
+            </div>
+
+            <div class="button-container">
+                <button class="btn btn-primary" id="check-message-btn">
+                     Analizar Mensaje
+                </button>
+                <button class="btn btn-secondary" id="clear-btn">
+                    🗑️ Limpiar
+                </button>
+            </div>
+
+            <div class="result-container">
+                <div id="result"></div>
+                <div id="detected-patterns" class="detected-patterns" style="display: none;">
+                    <h3>Patrones detectados:</h3>
+                    <div id="patterns-list"></div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-checked">0</div>
+                    <div class="stat-label">Mensajes analizados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="spam-detected">0</div>
+                    <div class="stat-label">Spam detectado</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="safe-messages">0</div>
+                    <div class="stat-label">Mensajes seguros</div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2023 Detector de Spam Avanzado | Implementado con Flex y Bison</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
