@@ -25,12 +25,13 @@ app.post('/api/analyze', (req, res) => {
 
     // Crear un archivo temporal con el mensaje
     const tempFile = path.join(__dirname, 'temp_message.txt');
-    fs.writeFileSync(tempFile, `/* ${message} */`);
+    fs.writeFileSync(tempFile, `${message}`);
+    console.log(`Contenido escrito en el archivo: "${message}"`);
 
     // Ejecutar el detector de spam compilado
-    exec(`./spam_detector ${tempFile}`, (error, stdout, stderr) => {
+    exec(`./spam_detector "${tempFile}"`, (error, stdout, stderr) => {
         // Eliminar el archivo temporal
-        fs.unlinkSync(tempFile);
+        //fs.unlinkSync(tempFile);
 
         if (error) {
             console.error(`Error al ejecutar el detector: ${error.message}`);
