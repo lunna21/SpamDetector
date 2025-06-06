@@ -245,3 +245,17 @@ void free_analysis_result(analysis_result_t* result) {
         result->pattern_count = 0;
     }
 }
+
+/* Función para guardar las estadísticas en el archivo */
+void save_statistics() {
+    stats_t stats = get_statistics();
+    FILE* file = fopen("stats", "w");
+    if (file) {
+        fprintf(file, "%d,%d,%d,%.2f", 
+            stats.total_messages,
+            stats.spam_messages, 
+            stats.safe_messages,
+            stats.spam_percentage);
+        fclose(file);
+    }
+}

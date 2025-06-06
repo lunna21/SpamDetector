@@ -4146,9 +4146,17 @@ void begin_analysis(const char* text) {
     spam_score = 0;
     pattern_count = 0;
     
-    /* Crear un nuevo buffer para el análisis */
-    YY_BUFFER_STATE buffer = yy_scan_string(text);
-    BEGIN(ANALYZING_TEXT);
+    /* Envolver el texto con los delimitadores necesarios */
+    char* wrapped_text = malloc(strlen(text) + 5); // +5 para "/" + "/" + null
+    if (wrapped_text) {
+        sprintf(wrapped_text, "/%s/", text);
+        YY_BUFFER_STATE buffer = yy_scan_string(wrapped_text);
+        free(wrapped_text);
+        BEGIN(INITIAL); // Comienza en INITIAL para detectar /* correctamente
+    } else {
+        // Manejo del error si malloc falla
+        fprintf(stderr, "Error: No se pudo asignar memoria para el análisis\n");
+    }
 }
 
 /* Función para finalizar el análisis */

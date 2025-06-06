@@ -7,6 +7,12 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = 3000;
 
+// Asegurarse de que el archivo stats existe
+if (!fs.existsSync(path.join(__dirname, 'stats'))) {
+    fs.writeFileSync(path.join(__dirname, 'stats'), '0,0,0,0');
+    console.log('Archivo stats creado');
+}
+
 // Middlewares
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'web')));
@@ -25,7 +31,7 @@ app.post('/api/analyze', (req, res) => {
 
     // Crear un archivo temporal con el mensaje
     const tempFile = path.join(__dirname, 'temp_message.txt');
-    fs.writeFileSync(tempFile, `${message}`);
+    fs.writeFileSync(tempFile, `/*${message}*/`);
     console.log(`Contenido escrito en el archivo: "${message}"`);
 
     // Ejecutar el detector de spam compilado
@@ -63,6 +69,9 @@ app.post('/api/analyze', (req, res) => {
 
         // Obtener estadísticas actuales (si estuvieran disponibles)
         exec(`./spam_detector stats`, (statError, statStdout) => {
+            console.log("Salida de estadísticas:", statStdout);
+            console.log("Error de estadísticas:", statError);
+            
             let stats = {
                 total_messages: 0,
                 spam_messages: 0,
@@ -83,6 +92,8 @@ app.post('/api/analyze', (req, res) => {
                 if (percentMatch) stats.spam_percentage = parseFloat(percentMatch[1]);
             }
 
+            console.log("Estadísticas enviadas al cliente:", stats);
+            
             res.json({
                 isSpam,
                 confidence,

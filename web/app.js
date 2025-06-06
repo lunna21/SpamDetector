@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showDetectedPatterns = (patterns) => {
         if (patterns && patterns.length > 0) {
             patternsListDiv.innerHTML = patterns
-                .map(pattern => `<span class="pattern-item">${pattern.name}: "${pattern.match}" (línea ${pattern.line})</span>`)
+                .map(pattern => `<span class="pattern-item">${pattern.name}: "${pattern.match}"</span>`)
                 .join('');
             detectedPatternsDiv.style.display = 'block';
         } else {
